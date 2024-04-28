@@ -6,6 +6,7 @@ import '../pages/candidate_detail_page.dart';
 class CandidateTile extends StatelessWidget {
   final Candidate candidate;
 
+
   CandidateTile({required this.candidate});
 
   @override

@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import '../models/candidate.dart';
 import '../pages/strings.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 
 class AddCandidatePage extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _AddCandidatePageState extends State<AddCandidatePage> {
   final _lastNameController = TextEditingController();
   final _descriptionController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
-  File? _imageFile;
+  Uint8List? _imageFile;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -35,10 +36,10 @@ class _AddCandidatePageState extends State<AddCandidatePage> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
+    final pickedFile = await FilePicker.platform.pickFiles();
+    if (pickedFile != null && pickedFile.files.single.path != null) {
       setState(() {
-        _imageFile = File(pickedFile.path);
+        _imageFile = File(pickedFile.files.single.path!).readAsBytesSync();
       });
     }
   }
@@ -67,7 +68,7 @@ class _AddCandidatePageState extends State<AddCandidatePage> {
                   child: _imageFile != null
                       ? ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.file(
+                    child: Image.memory(
                       _imageFile!,
                       fit: BoxFit.cover,
                     ),
